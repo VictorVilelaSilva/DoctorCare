@@ -1,9 +1,9 @@
 <?php
 // Configurações de conexão com o banco de dados
-$host = "localhost"; // endereço do servidor do banco de dados
-$dbname = "dweb"; // nome do banco de dados
-$username = "root"; // nome de usuário do banco de dados
-$password = ""; // senha do banco de dados
+$host = "localhost"; // Endereço do servidor do banco de dados
+$dbname = "dweb"; // Nome do banco de dados
+$username = "root"; // Nome de usuário do banco de dados
+$password = ""; // Senha do banco de dados
 
 // Criação da instância mysqli para conexão
 $conn = new mysqli($host, $username, $password, $dbname);

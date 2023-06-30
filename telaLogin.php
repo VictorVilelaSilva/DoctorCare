@@ -1,73 +1,25 @@
 <?php
-if (count($_POST) > 0) {
-    include('conexao.php');
-    include('usuario.php');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    include 'conexao.php';
+    include 'usuario.php';
 
-    // Obtém o usuário fornecido pelo formulário
-    $usuario = $_POST['usuario'];
+    // Dados do novo usuário
+    $nome = "";
+    $email = "";
+    $cpf = $_POST['cpf'] ?? '';
+    $senha = $_POST['senha'] ?? '';
+    $ddd = 0;
+    $telefone = "";
+    $cep = "";
+    $complemento = "";
+    $numero = 0;
 
-    $sql = "SELECT * FROM usuario WHERE email = ? OR cpf = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $usuario, $usuario);
+    // Criar um objeto usuário com os dados informados
+    $usuario = new Usuario($nome, $email, $cpf, $senha, $ddd, $telefone, $cep, $complemento, $numero);
 
-    // Executa a consulta
-    $stmt->execute();
-
-    // Obtém o resultado da consulta
-    $result = $stmt->get_result();
-
-    // Verifica se a consulta retornou algum resultado
-    if ($result->num_rows > 0) {
-        // Recupera os dados do usuário
-        $row = $result->fetch_assoc();
-
-        // Obtém os dados do usuário
-        $id = $row["id"];
-        $nome = $row["nome"];
-        $email = $row["email"];
-        $cpf = $row["cpf"];
-        $senha = $row['senha'];
-        $ddd = $row['ddd'];
-        $telefone = $row['telefone'];
-        $cep = $row['cep'];
-        $complemento = $row['complemento'];
-        $numero = $row['numero'];
-
-        $senhaCriptografada = $senha;
-        $senha = $_POST['senha'];
-
-        if (password_verify($senha, $senhaCriptografada) && ($email == $usuario || $cpf == $usuario)) {
-
-            session_start(); // Inicia a sessão
-
-            // Armazena os dados nas variáveis de sessão
-            $_SESSION['id'] = $id;
-            $_SESSION['nome'] = $nome;
-            $_SESSION['email'] = $email;
-            $_SESSION['cpf'] = $cpf;
-            $_SESSION['senha'] = $senha;
-            $_SESSION['ddd'] = $ddd;
-            $_SESSION['telefone'] = $telefone;
-            $_SESSION['cep'] = $cep;
-            $_SESSION['complemento'] = $complemento;
-            $_SESSION['numero'] = $numero;
-
-            // Redireciona para a página "telaLogado.php"
-            header('Location: telaLogado.php');
-            exit;
-        } else {
-            echo "Dados incorretos";
-        }
-    } else {
-        echo "Nenhum usuário foi encontrado";
-    }
-
-    // Fecha a declaração e a conexão
-    $stmt->close();
-    $conn->close();
+    $usuario->validaLogin();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -194,8 +146,8 @@ if (count($_POST) > 0) {
         <div id="loginContainer">
             <h1>Login</h1>
             <form method="POST" action="">
-                <label for="usuario">Usuário</label>
-                <input type="text" name="usuario" id="usuario" placeholder="Digite o usuário" autocomplete="on">
+                <label for="cpf">CPF</label>
+                <input type="text" name="cpf" id="cpf" placeholder="Digite o usuário" autocomplete="on">
                 <label for="senha">Senha</label>
                 <input type="password" name="senha" id="senha" placeholder="Digite a sua senha">
                 <a href="#" id="esqueceuSenha">Esqueceu a senha?</a>

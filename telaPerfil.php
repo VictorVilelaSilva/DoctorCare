@@ -1,49 +1,47 @@
 <?php
-    session_start();
-    $id = $_SESSION['id'];
-    // $nome = $_SESSION['nome'];
-    // $email = $_SESSION['email'];
-    // $cpf = $_SESSION['cpf'];
-    // $senha = $_SESSION['senha'];
-    // $ddd = $_SESSION['ddd'];
-    // $telefone = $_SESSION['telefone'];
-    // $cep = $_SESSION['cep'];
-    // $complemento = $_SESSION['complemento'];
-    // $numero = $_SESSION['numero'];
+session_start();
+$id = $_SESSION['id'];
 
-    if(count($_POST) > 0) {
-        include('conexao.php');
-        include('usuario.php');
+if (count($_POST) > 0) {
+    include('conexao.php');
+    include('usuario.php');
 
-        if (isset($_POST['btnExcluir'])) {
-          // Criar um objeto usuário com os dados informados
-          $usuario = new Usuario($_SESSION['nome'], $_SESSION['email'], $_SESSION['cpf'], $_SESSION['senha'], $_SESSION['ddd'], $_SESSION['telefone'], $_SESSION['cep'], $_SESSION['complemento'], $_SESSION['numero']);
+    if (isset($_POST['btnExcluir'])) {
+        // Excluir usuário
+        $usuario = new Usuario($_SESSION['nome'], $_SESSION['email'], $_SESSION['cpf'], $_SESSION['senha'], $_SESSION['ddd'], $_SESSION['telefone'], $_SESSION['cep'], $_SESSION['complemento'], $_SESSION['numero']);
+        $usuario->excluir($id);
+    } elseif (isset($_POST['btnAtualizar'])) {
+        // Atualizar dados do usuário
+        $nome = $_POST['nome'];
+        $email = $_POST['email'];
+        $cpf = $_POST['cpf'];
+        $senha = $_POST['senha'];
+        $ddd = $_POST['ddd'];
+        $telefone = $_POST['telefone'];
+        $cep = $_POST['cep'];
+        $complemento = $_POST['complemento'];
+        $numero = $_POST['numero'];
 
-          $usuario->excluir($id);
-        } elseif (isset($_POST['btnAtualizar'])) {
-          // Dados do novo usuário
-          $nome = $_POST['nome'];
-          $email = $_POST['email'];
-          $cpf = $_POST['cpf'];
-          $senha = $_POST['senha'];
-          $ddd = $_POST['ddd'];
-          $telefone = $_POST['telefone'];
-          $cep = $_POST['cep'];
-          $complemento = $_POST['complemento'];
-          $numero = $_POST['numero'];
+        $usuario = new Usuario($nome, $email, $cpf, $senha, $ddd, $telefone, $cep, $complemento, $numero);
+        $usuario->atualizar($id);
+    } elseif (isset($_POST['btnLogout'])) {
+      
+      $_SESSION['id'] = 0;
+      $_SESSION['nome'] = "";
+      $_SESSION['email'] = "";
+      $_SESSION['cpf'] = "";
+      $_SESSION['senha'] = "";
+      $_SESSION['ddd'] = 0;
+      $_SESSION['telefone'] = "";
+      $_SESSION['cep'] = "";
+      $_SESSION['complemento'] = "";
+      $_SESSION['numero'] = 0;
 
-          // Criar um objeto usuário com os dados informados
-          $usuario = new Usuario($nome, $email, $cpf, $senha, $ddd, $telefone, $cep, $complemento, $numero);
-
-          $usuario->atualizar($id);
-        }
-        
-
-        
-    }
+      echo '<script>alert("' . "Usuário deslogado com sucesso!" . '");</script>';
+        echo '<script>window.location.href = "' . "index.html" . '";</script>';
+  }
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -79,20 +77,22 @@
           <path d="M126.888 17.376C125.688 17.376 124.624 17.12 123.696 16.608C122.768 16.096 122.04 15.376 121.512 14.448C120.984 13.52 120.72 12.448 120.72 11.232C120.72 10 120.976 8.904 121.488 7.944C122.016 6.984 122.736 6.24 123.648 5.712C124.576 5.168 125.664 4.896 126.912 4.896C128.08 4.896 129.112 5.152 130.008 5.664C130.904 6.176 131.6 6.88 132.096 7.776C132.608 8.656 132.864 9.64 132.864 10.728C132.864 10.904 132.856 11.088 132.84 11.28C132.84 11.472 132.832 11.672 132.816 11.88H123.768C123.832 12.808 124.152 13.536 124.728 14.064C125.32 14.592 126.032 14.856 126.864 14.856C127.488 14.856 128.008 14.72 128.424 14.448C128.856 14.16 129.176 13.792 129.384 13.344H132.504C132.28 14.096 131.904 14.784 131.376 15.408C130.864 16.016 130.224 16.496 129.456 16.848C128.704 17.2 127.848 17.376 126.888 17.376ZM126.912 7.392C126.16 7.392 125.496 7.608 124.92 8.04C124.344 8.456 123.976 9.096 123.816 9.96H129.744C129.696 9.176 129.408 8.552 128.88 8.088C128.352 7.624 127.696 7.392 126.912 7.392Z" fill="#00856F"/>
           </svg>        
       </a>      
-      <!-- <div class="menu">
+      <div class="menu">
         <ul>
-          <li><a class="active" onclick="closeMenu()" href="#home">Início</a></li>
+          <!-- <li><a class="active" onclick="closeMenu()" href="#home">Início</a></li>
           <li><a onclick="closeMenu()" href="#services">Seviços</a></li>
           <li><a  onclick="closeMenu()" href="#about">Sobre</a></li>
           <li><a  onclick="closeMenu()" href="#contact">Contato</a></li>
-          <li><a  onclick="closeMenu()" href="#JanelaLogin">Login</a></li>
+          <li><a  onclick="closeMenu()" href="#JanelaLogin">Login</a></li> -->
         </ul>
 
-        
+          <!-- <a href="#contact" class="button" onclick="closeMenu()">Logout</a> -->
 
-          <a href="#contact" class="button" onclick="closeMenu()">Agende sua consulta</a>
+          <form method="POST" action="">
+            <button type="submit" class="button" id="loginButton" name="btnLogout">Logout</button>
+          </form>
 
-          <ul class="social-links">
+          <!-- <ul class="social-links">
             <li>
               <a href="http://www.instagram.com" target="_blank">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,8 +117,8 @@
                   </svg>
               </a>
             </li>
-          </ul>          
-      </div> -->
+          </ul>           -->
+      </div>
       <!-- aria é uma propriedade para acessibilidade, podemos definir um nome e tem algumas características que os leitores de acessibilidade reconhecem e interpretam. -->  
       <button       
       aria-expanded="false" 
@@ -166,7 +166,7 @@
           Excluir Conta
         </a> -->
         <form method="POST" action="">
-          <button type="submit" class="button" id="loginButton" name="btnExcluir" style="margin-bottom: 15px;">Excluir Conta</button>
+          <button type="submit" class="button" id="loginButton" name="btnExcluir"  style="margin-bottom: 15px;">Excluir Conta</button>
         </form>
 
        </div>
@@ -186,7 +186,7 @@
                   <label for="senha">Senha</label>
                 </div>
                 <div id="labelA">
-                  <input type="text" name="cpf" id="cpf" value="<?php echo $_SESSION['cpf']; ?>"placeholder="Digite seu CPF" autocomplete="on">
+                  <input type="text" name="cpf" id="cpf" value="<?php echo $_SESSION['cpf']; ?>"placeholder="Digite seu CPF" autocomplete="on" readonly>
                   <input type="password" name="senha" id="senha" value="<?php echo $_SESSION['senha']; ?>" placeholder="Digite a sua senha">
                 </div>
                 <div id="labelA">

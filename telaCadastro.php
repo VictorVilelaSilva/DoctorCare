@@ -1,27 +1,25 @@
 <?php
-    if(count($_POST) > 0) {
-        include('conexao.php');
-        include('usuario.php');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    include 'conexao.php';
+    include 'usuario.php';
 
-        // Dados do novo usuário
-        $nome = $_POST['nome'];
-        $email = $_POST['email'];
-        $cpf = $_POST['cpf'];
-        $senha = $_POST['senha'];
-        $ddd = $_POST['ddd'];
-        $telefone = $_POST['telefone'];
-        $cep = $_POST['cep'];
-        $complemento = $_POST['complemento'];
-        $numero = $_POST['numero'];
+    // Dados do novo usuário
+    $nome = $_POST['nome'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $cpf = $_POST['cpf'] ?? '';
+    $senha = $_POST['senha'] ?? '';
+    $ddd = $_POST['ddd'] ?? '';
+    $telefone = $_POST['telefone'] ?? '';
+    $cep = $_POST['cep'] ?? '';
+    $complemento = $_POST['complemento'] ?? '';
+    $numero = $_POST['numero'] ?? '';
 
-        // Criar um objeto usuário com os dados informados
-        $usuario = new Usuario($nome, $email, $cpf, $senha, $ddd, $telefone, $cep, $complemento, $numero);
+    // Criar um objeto usuário com os dados informados
+    $usuario = new Usuario($nome, $email, $cpf, $senha, $ddd, $telefone, $cep, $complemento, $numero);
 
-        $usuario->cadastrar();
-    }
+    $usuario->cadastrar();
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="pt-br">

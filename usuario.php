@@ -1,6 +1,4 @@
 <?php
-//session_start(); // Inicia a sessão
-
 class Usuario {
     private $nome;
     private $email;
@@ -281,29 +279,13 @@ class Usuario {
         $conn->close();
     }
     
-    // Método para buscar um usuário pelo ID
-    public static function buscarPorId($id) {
-        include('conexao.php');
-    
-        $query = "SELECT * FROM usuario WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    
-        if ($result->num_rows > 0) {
-            $usuario = $result->fetch_assoc();
-            return $usuario;
-        } else {
-            $this->exibirAlerta("Usuário não encontrado.");
-        }
-    
-        $stmt->close();
-        $conn->close();
-    }
-    
     // Método para atualizar os dados de um usuário
     public function atualizar($id) {
+        // Validar os campos antes de prosseguir
+        if (!$this->validarCampos()) {
+            return;
+        }
+
         include('conexao.php');
 
         // Hash da senha usando o algoritmo padrão
@@ -315,9 +297,6 @@ class Usuario {
         $stmt->bind_param("sssssssssi", $this->nome, $this->email, $this->cpf, $senhaHash, $this->ddd, $this->telefone, $this->cep, $this->complemento, $this->numero, $id);
 
         if ($stmt->execute()) {
-            // $this->exibirAlertaRedirecionar("Usuário atualizado com sucesso!", 'telaLogado.php');
-            $this->exibirAlerta("Usuário atualizado com sucesso!");
-            session_start(); // Inicia a sessão
 
             // Armazena os dados nas variáveis de sessão
             $_SESSION['id'] = $id;
@@ -331,9 +310,7 @@ class Usuario {
             $_SESSION['complemento'] = $this->complemento;
             $_SESSION['numero'] = $this->numero;
 
-            // Redireciona para a página "telaLogado.php"
-            header('Location: telaLogado.php');
-            exit;
+            $this->exibirAlertaRedirecionar("Usuário atualizado com sucesso!", 'telaLogado.php');
 
         } else {
             echo "Erro ao atualizar usuário: " . $stmt->error;
@@ -352,8 +329,6 @@ class Usuario {
         $stmt->bind_param("i", $id);
     
         if ($stmt->execute()) {
-            // $this->exibirAlertaRedirecionar("Usuário excluído com sucesso!", 'index.html');
-            // $this->exibirAlerta("Usuário excluído com sucesso!");
             session_start(); // Inicia a sessão
 
             // Armazena os dados nas variáveis de sessão
@@ -368,9 +343,6 @@ class Usuario {
             $_SESSION['complemento'] = "";
             $_SESSION['numero'] = 0;
 
-            // Redireciona para a página "index.html"
-            //header('Location: index.html');
-            //exit;
             $this->exibirAlertaRedirecionar("Usuário excluído com sucesso!", 'index.html');
 
         } else {
@@ -380,6 +352,75 @@ class Usuario {
         $stmt->close();
         $conn->close();
     }
+
+    //Método para validar o Login do usuário
+    public function validaLogin() {
+        if (!$this->validarCPF($this->cpf) || !$this->validarSenha($this->senha)) {
+            return;
+        }
+
+        include('conexao.php');
+
+        $usuario = $this->cpf;
+
+        $sql = "SELECT * FROM usuario WHERE cpf = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $usuario);
+
+        // Executa a consulta
+        $stmt->execute();
+
+        // Obtém o resultado da consulta
+        $result = $stmt->get_result();
+
+        // Verifica se a consulta retornou algum resultado
+        if ($result->num_rows > 0) {
+            // Recupera os dados do usuário
+            $row = $result->fetch_assoc();
+
+            // Obtém os dados do usuário
+            $this->id = $row["id"];
+            $this->nome = $row["nome"];
+            $this->email = $row["email"];
+            $this->cpf = $row["cpf"];
+            $senhaCriptografada = $row['senha'];
+            $this->ddd = $row['ddd'];
+            $this->telefone = $row['telefone'];
+            $this->cep = $row['cep'];
+            $this->complemento = $row['complemento'];
+            $this->numero = $row['numero'];
+
+            if (password_verify($this->senha, $senhaCriptografada) && ($this->cpf == $usuario)) {
+
+                session_start(); // Inicia a sessão
+
+                // Armazena os dados nas variáveis de sessão
+                $_SESSION['id'] = $this->id;
+                $_SESSION['nome'] = $this->nome;
+                $_SESSION['email'] = $this->email;
+                $_SESSION['cpf'] = $this->cpf;
+                $_SESSION['senha'] = $this->senha;
+                $_SESSION['ddd'] = $this->ddd;
+                $_SESSION['telefone'] = $this->telefone;
+                $_SESSION['cep'] = $this->cep;
+                $_SESSION['complemento'] = $this->complemento;
+                $_SESSION['numero'] = $this->numero;
+
+                // Redireciona para a página "telaLogado.php"
+                $this->exibirAlertaRedirecionar("Login feito com sucesso!", 'telaLogado.php');
+            } else {
+                $this->exibirAlerta("Dados incorretos");
+            }
+        } else {
+            $this->exibirAlerta("Nenhum usuário foi encontrado");
+        }
+
+        // Fecha a declaração e a conexão
+        $stmt->close();
+        $conn->close();
+    }
+
+
     // Outros métodos da classe aqui...
 }
 ?>
