@@ -1,52 +1,47 @@
-window.addEventListener('scroll', onScroll)
+window.addEventListener('scroll', onScroll);
 
-onScroll()
-
-/* CRIANDO FUNÇÕES */
-function onScroll() { 
-    showNavOnScroll()
-    showBackToTopButtonOnScroll()
-    }
-    
-    
-
-
-function showNavOnScroll() {  /*  DECLARO A FUNÇÃO QUE VOU CRIAR E O QUE ELA VAI FAZER  */
-    if(scrollY > 550) {
-        navigation.classList.add('scroll')  // aqui eu chamo a função para o ID setado no HTML 
-        } else {
-            navigation.classList.remove('scroll')
-        }
-}
-
-
-function showBackToTopButtonOnScroll() {  /*  DECLARO A FUNÇÃO QUE VOU CRIAR E O QUE ELA VAI FAZER  */
-    if(scrollY > 550) {
-        backToTopButton.classList.add('show')  // aqui eu chamo a função para o ID setado no HTML 
-        } else {
-            backToTopButton.classList.remove('show')
-        }
-}
-
-function openMenu(){  /*  DECLARO A FUNÇÃO QUE VOU CRIAR E O QUE ELA VAI FAZER  */
-    document.body.classList.add('menu-expanded')
-}
-
-function closeMenu(){   /*  DECLARO A FUNÇÃO QUE VOU CRIAR E O QUE ELA VAI FAZER  */
-    document.body.classList.remove('menu-expanded')
-}
-
-
-
-
-/* EXECUTANDO FUNÇÕES */
 onScroll();
 
+function onScroll() {
+  showNavOnScroll();
+  showBackToTopButtonOnScroll();
+}
+
+function showNavOnScroll() {
+  // Adiciona a classe 'scroll' ao elemento de navegação quando o scrollY é maior que 550
+  if (window.scrollY > 550) {
+    navigation.classList.add('scroll');
+  } else {
+    navigation.classList.remove('scroll');
+  }
+}
+
+function showBackToTopButtonOnScroll() {
+  // Adiciona a classe 'show' ao botão 'backToTopButton' quando o scrollY é maior que 550
+  if (window.scrollY > 550) {
+    backToTopButton.classList.add('show');
+  } else {
+    backToTopButton.classList.remove('show');
+  }
+}
+
+function openMenu() {
+  // Adiciona a classe 'menu-expanded' ao body
+  document.body.classList.add('menu-expanded');
+}
+
+function closeMenu() {
+  // Remove a classe 'menu-expanded' do body
+  document.body.classList.remove('menu-expanded');
+}
+
+// Executa a função onScroll no carregamento da página
+window.addEventListener('load', onScroll);
 
 ScrollReveal({
-    origin: 'top',
-    distance: '300px',
-    duration: 1000,
+  origin: 'top',
+  distance: '300px',
+  duration: 1000
 }).reveal(`
 #home, 
 #home img, 
@@ -58,9 +53,3 @@ ScrollReveal({
 #about header,
 #about .content
 `);
-
-//=============================================================
-
-  
-  
-  
