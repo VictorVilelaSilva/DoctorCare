@@ -1,3 +1,74 @@
+<?php
+if (count($_POST) > 0) {
+    include('conexao.php');
+    include('usuario.php');
+
+    // Obtém o usuário fornecido pelo formulário
+    $usuario = $_POST['usuario'];
+
+    $sql = "SELECT * FROM usuario WHERE email = ? OR cpf = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $usuario, $usuario);
+
+    // Executa a consulta
+    $stmt->execute();
+
+    // Obtém o resultado da consulta
+    $result = $stmt->get_result();
+
+    // Verifica se a consulta retornou algum resultado
+    if ($result->num_rows > 0) {
+        // Recupera os dados do usuário
+        $row = $result->fetch_assoc();
+
+        // Obtém os dados do usuário
+        $id = $row["id"];
+        $nome = $row["nome"];
+        $email = $row["email"];
+        $cpf = $row["cpf"];
+        $senha = $row['senha'];
+        $ddd = $row['ddd'];
+        $telefone = $row['telefone'];
+        $cep = $row['cep'];
+        $complemento = $row['complemento'];
+        $numero = $row['numero'];
+
+        $senhaCriptografada = $senha;
+        $senha = $_POST['senha'];
+
+        if (password_verify($senha, $senhaCriptografada) && ($email == $usuario || $cpf == $usuario)) {
+
+            session_start(); // Inicia a sessão
+
+            // Armazena os dados nas variáveis de sessão
+            $_SESSION['id'] = $id;
+            $_SESSION['nome'] = $nome;
+            $_SESSION['email'] = $email;
+            $_SESSION['cpf'] = $cpf;
+            $_SESSION['senha'] = $senha;
+            $_SESSION['ddd'] = $ddd;
+            $_SESSION['telefone'] = $telefone;
+            $_SESSION['cep'] = $cep;
+            $_SESSION['complemento'] = $complemento;
+            $_SESSION['numero'] = $numero;
+
+            // Redireciona para a página "telaLogado.php"
+            header('Location: telaLogado.php');
+            exit;
+        } else {
+            echo "Dados incorretos";
+        }
+    } else {
+        echo "Nenhum usuário foi encontrado";
+    }
+
+    // Fecha a declaração e a conexão
+    $stmt->close();
+    $conn->close();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -9,9 +80,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
   <link rel="stylesheet" href="./style.css" />
 </head>
 
@@ -115,49 +183,25 @@
           de sua doença e proporcionar uma cura a longo prazo. -->
           Caso ainda não possua cadastro, este é o seu momento de fazer parte de algo especial. Não perca tempo, dê o primeiro passo e cadastre-se!
         </p>
-        <!-- <a href="telaCadastro" class="button">
+        <a href="telaCadastro.php" class="button">
           Realizar Cadastro
-        </a> -->
+        </a>
        </div>
 
     </div>
     <div class="col-b">
       <!-- <img src="./assets/Foto.png" alt="Mulher negra vestindo moletom verde e sorrindo" />   -->
         <div id="loginContainer">
-            <h1>Cadastre-se</h1>
-            <form action="">
-                <label for="name">Nome</label>
-                <input type="name" name="name" id="name" placeholder="Digite seu nome" autocomplete="on">
-                <label for="email">E-mail</label>
-                <input type="email" name="email" id="email" placeholder="Digite seu e-mail" autocomplete="off">
-                <div id="labelA">
-                  <label for="cpf">CPF</label>
-                  <label for="password">Senha</label>
-                </div>
-                <div id="labelA">
-                  <input type="text" name="cpf" id="cpf" placeholder="Digite seu CPF" autocomplete="on">
-                  <input type="password" name="password" id="password" placeholder="Digite a sua senha">
-                </div>
-                <div id="labelA">
-                  <label for="ddd" id="dddLabel">DDD</label>
-                  <label for="phone">Telefone</label>
-                  <label for="cep">CEP</label>
-                </div>
-                <div id="labelA">
-                  <input type="text" name="ddd" id="ddd" placeholder="DDD" autocomplete="off">
-                  <input type="phone" name="telefone" id="telefone" placeholder="Digite o nº de telefone" autocomplete="off">
-                  <input type="text" name="cep" id="cep" placeholder="Digite o CEP">
-                </div>
-                <div id="labelA">
-                  <label for="complemento">Complemento</label>
-                  <label for="text" id="numeroLabel">Número</label>
-                </div>
-                <div id="labelA">
-                  <input type="text" name="complemento" id="complemento" placeholder="Digite o complemento do end." autocomplete="off">
-                  <input type="text" name="numero" id="numero" placeholder="Nº">
-                </div>
+            <h1>Login</h1>
+            <form method="POST" action="">
+                <label for="usuario">Usuário</label>
+                <input type="text" name="usuario" id="usuario" placeholder="Digite o usuário" autocomplete="on">
+                <label for="senha">Senha</label>
+                <input type="password" name="senha" id="senha" placeholder="Digite a sua senha">
+                <a href="#" id="esqueceuSenha">Esqueceu a senha?</a>
                 <!-- <input type="submit" value="Login"> -->
-                <a href="#" class="button" id="loginButton">Cadastrar</a>
+                <!-- <a href="#" class="button" id="loginButton">Login</a> -->
+                <button type="submit" class="button" id="loginButton">Login</button>
             </form>
         </div>
 

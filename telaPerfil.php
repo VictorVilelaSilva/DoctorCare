@@ -1,3 +1,50 @@
+<?php
+    session_start();
+    $id = $_SESSION['id'];
+    // $nome = $_SESSION['nome'];
+    // $email = $_SESSION['email'];
+    // $cpf = $_SESSION['cpf'];
+    // $senha = $_SESSION['senha'];
+    // $ddd = $_SESSION['ddd'];
+    // $telefone = $_SESSION['telefone'];
+    // $cep = $_SESSION['cep'];
+    // $complemento = $_SESSION['complemento'];
+    // $numero = $_SESSION['numero'];
+
+    if(count($_POST) > 0) {
+        include('conexao.php');
+        include('usuario.php');
+
+        if (isset($_POST['btnExcluir'])) {
+          // Criar um objeto usuário com os dados informados
+          $usuario = new Usuario($_SESSION['nome'], $_SESSION['email'], $_SESSION['cpf'], $_SESSION['senha'], $_SESSION['ddd'], $_SESSION['telefone'], $_SESSION['cep'], $_SESSION['complemento'], $_SESSION['numero']);
+
+          $usuario->excluir($id);
+        } elseif (isset($_POST['btnAtualizar'])) {
+          // Dados do novo usuário
+          $nome = $_POST['nome'];
+          $email = $_POST['email'];
+          $cpf = $_POST['cpf'];
+          $senha = $_POST['senha'];
+          $ddd = $_POST['ddd'];
+          $telefone = $_POST['telefone'];
+          $cep = $_POST['cep'];
+          $complemento = $_POST['complemento'];
+          $numero = $_POST['numero'];
+
+          // Criar um objeto usuário com os dados informados
+          $usuario = new Usuario($nome, $email, $cpf, $senha, $ddd, $telefone, $cep, $complemento, $numero);
+
+          $usuario->atualizar($id);
+        }
+        
+
+        
+    }
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -9,13 +56,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
   <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body class="">
   <nav id="navigation" class="">
     <div class="wrapper">
-      <a class="logo" onclick="closeMenu()" href="index.html">
+      <a class="logo" onclick="closeMenu()" href="telaLogado.php">
         <svg width="133" height="18" viewBox="0 0 133 18" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0 17.088V0.287999H5.16C8.12 0.287999 10.296 1.04 11.688 2.544C13.096 4.048 13.8 6.112 13.8 8.736C13.8 11.312 13.096 13.352 11.688 14.856C10.296 16.344 8.12 17.088 5.16 17.088H0ZM2.016 15.408H5.112C6.744 15.408 8.04 15.144 9 14.616C9.976 14.072 10.672 13.304 11.088 12.312C11.504 11.304 11.712 10.112 11.712 8.736C11.712 7.328 11.504 6.12 11.088 5.112C10.672 4.104 9.976 3.328 9 2.784C8.04 2.24 6.744 1.968 5.112 1.968H2.016V15.408Z" fill="#212529"/>
           <path d="M22.4949 17.376C21.3749 17.376 20.3669 17.12 19.4709 16.608C18.5749 16.096 17.8629 15.376 17.3349 14.448C16.8229 13.504 16.5669 12.4 16.5669 11.136C16.5669 9.872 16.8309 8.776 17.3589 7.848C17.8869 6.904 18.5989 6.176 19.4949 5.664C20.4069 5.152 21.4229 4.896 22.5429 4.896C23.6629 4.896 24.6709 5.152 25.5669 5.664C26.4629 6.176 27.1669 6.904 27.6789 7.848C28.2069 8.776 28.4709 9.872 28.4709 11.136C28.4709 12.4 28.2069 13.504 27.6789 14.448C27.1509 15.376 26.4309 16.096 25.5189 16.608C24.6229 17.12 23.6149 17.376 22.4949 17.376ZM22.4949 15.648C23.1829 15.648 23.8229 15.48 24.4149 15.144C25.0069 14.808 25.4869 14.304 25.8549 13.632C26.2229 12.96 26.4069 12.128 26.4069 11.136C26.4069 10.144 26.2229 9.312 25.8549 8.64C25.5029 7.968 25.0309 7.464 24.4389 7.128C23.8469 6.792 23.2149 6.624 22.5429 6.624C21.8549 6.624 21.2149 6.792 20.6229 7.128C20.0309 7.464 19.5509 7.968 19.1829 8.64C18.8149 9.312 18.6309 10.144 18.6309 11.136C18.6309 12.128 18.8149 12.96 19.1829 13.632C19.5509 14.304 20.0229 14.808 20.5989 15.144C21.1909 15.48 21.8229 15.648 22.4949 15.648Z" fill="#212529"/>
@@ -112,24 +162,54 @@
           de sua doença e proporcionar uma cura a longo prazo. -->
           Caso ainda não possua cadastro, este é o seu momento de fazer parte de algo especial. Não perca tempo, dê o primeiro passo e cadastre-se!
         </p>
-        <a href="telaCadastro.html" class="button">
-          Realizar Cadastro
-        </a>
+        <!-- <a href="telaCadastro" class="button">
+          Excluir Conta
+        </a> -->
+        <form method="POST" action="">
+          <button type="submit" class="button" id="loginButton" name="btnExcluir" style="margin-bottom: 15px;">Excluir Conta</button>
+        </form>
+
        </div>
 
     </div>
     <div class="col-b">
       <!-- <img src="./assets/Foto.png" alt="Mulher negra vestindo moletom verde e sorrindo" />   -->
         <div id="loginContainer">
-            <h1>Login</h1>
-            <form action="">
+            <h1>Dados</h1>
+            <form method="POST" action="">
+                <label for="nome">Nome</label>
+                <input type="name" name="nome" id="nome" value="<?php echo $_SESSION['nome']; ?>" placeholder="Digite o seu nome" autocomplete="on">
                 <label for="email">E-mail</label>
-                <input type="email" name="email" id="email" placeholder="Digite seu e-mail" autocomplete="off">
-                <label for="password">Senha</label>
-                <input type="password" name="password" id="password" placeholder="Digite a sua senha">
-                <a href="#" id="forgotPass">Esqueceu a senha?</a>
+                <input type="email" name="email" id="email" value="<?php echo $_SESSION['email']; ?>"placeholder="Digite o seu email" autocomplete="on">
+                <div id="labelA">
+                  <label for="cpf">CPF</label>
+                  <label for="senha">Senha</label>
+                </div>
+                <div id="labelA">
+                  <input type="text" name="cpf" id="cpf" value="<?php echo $_SESSION['cpf']; ?>"placeholder="Digite seu CPF" autocomplete="on">
+                  <input type="password" name="senha" id="senha" value="<?php echo $_SESSION['senha']; ?>" placeholder="Digite a sua senha">
+                </div>
+                <div id="labelA">
+                  <label for="ddd" id="dddLabel">DDD</label>
+                  <label for="telefone">Telefone</label>
+                  <label for="cep">CEP</label>
+                </div>
+                <div id="labelA">
+                  <input type="text" name="ddd" id="ddd" value="<?php echo $_SESSION['ddd']; ?>"placeholder="DDD" autocomplete="on">
+                  <input type="phone" name="telefone" id="telefone" value="<?php echo $_SESSION['telefone']; ?>" placeholder="Digite o nº de telefone" autocomplete="on">
+                  <input type="text" name="cep" id="cep" value="<?php echo $_SESSION['cep']; ?>" placeholder="Digite o CEP">
+                </div>
+                <div id="labelA">
+                  <label for="complemento">Complemento</label>
+                  <label for="numero" id="numeroLabel">Número</label>
+                </div>
+                <div id="labelA">
+                  <input type="text" name="complemento" value="<?php echo $_SESSION['complemento']; ?>"id="complemento" placeholder="Digite o complemento do end." autocomplete="on">
+                  <input type="text" name="numero" id="numero" value="<?php echo $_SESSION['numero']; ?>" placeholder="Nº">
+                </div>
                 <!-- <input type="submit" value="Login"> -->
-                <a href="#" class="button" id="loginButton">Login</a>
+                <!-- <a href="#" class="button" id="loginButton">Cadastrar</a> -->
+                <button type="submit" class="button" id="loginButton" name="btnAtualizar">Atualizar</button>
             </form>
         </div>
 
