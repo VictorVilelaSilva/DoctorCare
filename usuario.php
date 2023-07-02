@@ -23,7 +23,7 @@ class Usuario {
         $this->numero = $numero;
     }
 
-    // Método para exibir um alerta e redirecionar após clicar em "OK"
+    // Método para exibir um alerta e redirecionar
     private function exibirAlertaRedirecionar($mensagem, $redirecionarPara) {
         echo '<script>alert("' . $mensagem . '");</script>';
         echo '<script>window.location.href = "' . $redirecionarPara . '";</script>';
@@ -48,9 +48,6 @@ class Usuario {
             $this->exibirAlerta("Nome deve conter apenas letras e espaços.");
             return false;
         }
-
-        // Outras validações específicas para o nome (se necessário)
-
         return true;
     }
 
@@ -67,9 +64,6 @@ class Usuario {
             echo "Email inválido.";
             return false;
         }
-
-        // Outras validações específicas para o email (se necessário)
-
         return true;
     }
 
@@ -80,9 +74,6 @@ class Usuario {
             $this->exibirAlerta("CPF não pode estar vazio.");
             return false;
         }
-
-        // Remover caracteres especiais do CPF (pontos e traços)
-        $cpf = preg_replace("/[^0-9]/", "", $cpf);
 
         // Verificar se o CPF possui 11 dígitos
         if (strlen($cpf) != 11) {
@@ -118,9 +109,6 @@ class Usuario {
                 }
             }
         }
-
-        // Outras validações específicas para o CPF (se necessário)
-
         return true;
     }
 
@@ -131,9 +119,6 @@ class Usuario {
             $this->exibirAlerta("Senha não pode estar vazia.");
             return false;
         }
-
-        // Outras validações específicas para a senha (se necessário)
-
         return true;
     }
 
@@ -144,9 +129,9 @@ class Usuario {
             $this->exibirAlerta("DDD não pode estar vazio.");
             return false;
         }
-
+        
         if (!filter_var($ddd, FILTER_VALIDATE_INT)) {
-            echo "DDD inválido.";
+            $this->exibirAlerta("DDD inválido.");
             return;
         }
         
@@ -156,9 +141,6 @@ class Usuario {
             $this->exibirAlerta("DDD inválido.");
             return false;
         }
-
-        // Outras validações específicas para o DDD (se necessário)
-
         return true;
     }
 
@@ -170,14 +152,11 @@ class Usuario {
             return false;
         }
 
-        // Verificar se o telefone possui um formato válido
-        if (!preg_match("/^[0-9]{8,9}$/", $telefone)) {
+        // Verificar se o CPF possui 11 dígitos
+        if (strlen($telefone) != 9 && strlen($telefone) != 8) {
             $this->exibirAlerta("Telefone inválido.");
             return false;
         }
-
-        // Outras validações específicas para o telefone (se necessário)
-
         return true;
     }
 
@@ -189,14 +168,11 @@ class Usuario {
             return false;
         }
 
-        // Verificar se o CEP possui um formato válido
-        if (!preg_match("/^[0-9]{5}[0-9]{3}$/", $cep)) {
+        // Verificar se o CPF possui 11 dígitos
+        if (strlen($cep) != 8) {
             $this->exibirAlerta("CEP inválido.");
             return false;
         }
-
-        // Outras validações específicas para o CEP (se necessário)
-
         return true;
     }
 
@@ -207,9 +183,6 @@ class Usuario {
             $this->exibirAlerta("Número não pode estar vazio.");
             return false;
         }
-
-        // Outras validações específicas para o número (se necessário)
-
         return true;
     }
 
@@ -329,7 +302,7 @@ class Usuario {
         $stmt->bind_param("i", $id);
     
         if ($stmt->execute()) {
-            session_start(); // Inicia a sessão
+            //session_start(); // Inicia a sessão
 
             // Armazena os dados nas variáveis de sessão
             $_SESSION['id'] = -1;
@@ -419,13 +392,8 @@ class Usuario {
         $stmt->close();
         $conn->close();
     }
-
-
-    // Outros métodos da classe aqui...
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
