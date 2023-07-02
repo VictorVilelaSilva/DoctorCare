@@ -352,12 +352,6 @@ session_start();
     
 </a>
 
-<!-- ============================================================== -->
-
-
-
-<!-- ============================================================== -->
-
 <script src="https://unpkg.com/scrollreveal"></script> <!-- Biblioteca do scrollreveal -->
   <script src="./main.js"></script>
 </body>
