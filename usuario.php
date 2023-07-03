@@ -96,18 +96,6 @@ class Usuario {
             $cpf == '99999999999') {
             $this->exibirAlerta("CPF inválido.");
             return false;
-        } else {
-            // Calcula os dígitos verificadores para verificar se o CPF é válido
-            for ($i = 9; $i < 11; $i++) {
-                for ($j = 0, $k = 0; $k < $i; $k++) {
-                    $j += $cpf[$k] * (($i + 1) - $k);
-                }
-                $j = ((10 * $j) % 11) % 10;
-                if ($cpf[$k] != $j) {
-                    $this->exibirAlerta("CPF inválido.");
-                    return false;
-                }
-            }
         }
         return true;
     }
@@ -168,7 +156,7 @@ class Usuario {
             return false;
         }
 
-        // Verificar se o CPF possui 11 dígitos
+        // Verificar se o CEP possui 11 dígitos
         if (strlen($cep) != 8) {
             $this->exibirAlerta("CEP inválido.");
             return false;
@@ -232,7 +220,19 @@ class Usuario {
         }
     
         include('conexao.php');
-
+    
+        // Verificar se o CPF já existe no banco
+        $query = "SELECT cpf FROM usuario WHERE cpf = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $this->cpf);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            $this->exibirAlerta("CPF já cadastrado.");
+            return;
+        }
+    
         // Hash da senha usando o algoritmo padrão
         $senhaHash = password_hash($this->senha, PASSWORD_DEFAULT);
     
@@ -240,8 +240,19 @@ class Usuario {
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sssssssss", $this->nome, $this->email, $this->cpf, $senhaHash, $this->ddd, $this->telefone, $this->cep, $this->complemento, $this->numero);
-        
+        $stmt->bind_param(
+            "sssssssss",
+            $this->nome,
+            $this->email,
+            $this->cpf,
+            $senhaHash,
+            $this->ddd,
+            $this->telefone,
+            $this->cep,
+            $this->complemento,
+            $this->numero
+        );
+    
         if ($stmt->execute()) {
             $this->exibirAlertaRedirecionar("Usuário cadastrado com sucesso!", 'telaLogin.php');
         } else {
@@ -251,6 +262,7 @@ class Usuario {
         $stmt->close();
         $conn->close();
     }
+    
     
     // Método para atualizar os dados de um usuário
     public function atualizar($id) {
