@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $numero = $_POST['numero'] ?? '';
 
     // Criar um objeto usuário com os dados informados
-    $usuario = new Usuario($nome, $email, $cpf = preg_replace("/[^0-9]/", "", $cpf), $senha, $ddd, preg_replace("/[^0-9]/", "", $telefone), $cep = preg_replace("/[^0-9]/", "", $cep), $complemento, $numero);
+    $usuario = new Usuario($nome, $email, preg_replace("/[^0-9]/", "", $cpf), $senha, $ddd, preg_replace("/[^0-9]/", "", $telefone), preg_replace("/[^0-9]/", "", $cep), $complemento, $numero);
 
     $usuario->cadastrar();
 }

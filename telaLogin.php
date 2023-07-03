@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $numero = 0;
 
     // Criar um objeto usuário com os dados informados
-    $usuario = new Usuario($nome, $email, $cep = preg_replace("/[^0-9]/", "", $cpf), $senha, $ddd, $telefone, $cep, $complemento, $numero);
+    $usuario = new Usuario($nome, $email, preg_replace("/[^0-9]/", "", $cpf), $senha, $ddd, $telefone, $cep, $complemento, $numero);
 
     $usuario->validaLogin();
 }
